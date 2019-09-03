@@ -5,30 +5,17 @@
 # step2: 根据情况修改下面的参数
 # step3: 打开终端，执行脚本。（输入sh ，然后将脚本文件拉到终端，会生成文件路径，然后enter就可）
 
-# =============项目自定义部分(自定义好下列参数后再执行该脚本)=================== #
-# 获取当前脚本所在目录
-script_dir="$( cd "$( dirname "$0"  )" && pwd  )"
-# 工程根目录
-project_dir=$script_dir
+# 工程名称
+TARGET_NAME="AESDemo"
 
 # 是否编译工作空间 (例:若是用Cocopods管理的.xcworkspace项目,赋值true;用Xcode默认创建的.xcodeproj,赋值false)
 is_workspace="false"
-
-# .xcworkspace的名字，如果is_workspace为true，则必须填。否则可不填
-workspace_name="AESDemo"
-
-# .xcodeproj的名字，如果is_workspace为false，则必须填。否则可不填
-project_name="AESDemo"
-
-# 指定项目的scheme名称（也就是工程的target名称），必填
-scheme_name="AESDemo"
 
 # 指定要打包编译的方式 : Release,Debug。一般用Release。必填
 build_configuration="Release"
 
 # method，打包的方式。方式分别为 development, ad-hoc, app-store, enterprise 。必填
 method="enterprise"
-
 
 #  下面两个参数只是在手动指定Pofile文件的时候用到，如果使用Xcode自动管理Profile,直接留空就好
 # (跟method对应的)mobileprovision文件名，需要先双击安装.mobileprovision文件.手动管理Profile时必填
@@ -38,12 +25,26 @@ mobileprovision_name="NanJingMobileAppNBXCiPhoneDist"
 #com.yibao.YBMiniSteward
 bundle_identifier="com.njghj.NanJingMobileAppNBXCiPhone"
 
+# =======================蒲公英上传配置======================================= #
 #以下两个参数为蒲公英平台分配可以在账户这只里查看
+#是否上传蒲公英
+UPLOADPGYER=false
 #API Key
 apiKey="f8631cb200cfdeb86f866f41d616fee7"
 #User Key
 uKey="9c32276c15ee562c63f1be2722dc18b3"
 
+# =============项目自定义部分(自定义好下列参数后再执行该脚本)=================== #
+# 获取当前脚本所在目录
+script_dir="$( cd "$( dirname "$0"  )" && pwd  )"
+# 工程根目录
+project_dir=$script_dir
+# .xcworkspace的名字，如果is_workspace为true，则必须填。否则可不填
+workspace_name=$TARGET_NAME
+# .xcodeproj的名字，如果is_workspace为false，则必须填。否则可不填
+project_name=$TARGET_NAME
+# 指定项目的scheme名称（也就是工程的target名称），必填
+scheme_name=$TARGET_NAME
 
 echo "--------------------脚本配置参数检查--------------------"
 echo "\033[33;1mis_workspace=${is_workspace} "
@@ -54,7 +55,6 @@ echo "build_configuration=${build_configuration}"
 echo "bundle_identifier=${bundle_identifier}"
 echo "method=${method}"
 echo "mobileprovision_name=${mobileprovision_name} \033[0m"
-
 
 # =======================脚本的一些固定参数定义(无特殊情况不用修改)====================== #
 # 时间
@@ -69,8 +69,6 @@ export_ipa_path="$export_path"
 ipa_name="${scheme_name}_${DATE}"
 # 指定导出ipa包需要用到的plist配置文件的路径
 export_options_plist_path="$project_dir/ExportOptions.plist"
-
-
 
 
 echo "--------------------脚本固定参数检查--------------------"
@@ -185,6 +183,7 @@ rm -f $export_options_plist_path
 fi
 
 #上传到蒲公英
+if $UPLOADPGYER ; then
 
 echo "\033[32;1m开始上传 ${ipa_name}.ipa 包到蒲公英！！！！  \033[0m"
 
@@ -196,6 +195,9 @@ else
 echo "\033[31;1m上传 ${ipa_name}.ipa 包蒲公英失败 😢 😢 😢     \033[0m"
 exit 1
 fi
+
+fi
+
 
 # 输出打包总用时
 echo "\033[36;1m使用distribution打包总用时: ${SECONDS}s \033[0m"
